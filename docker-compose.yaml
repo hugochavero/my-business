@@ -1,0 +1,28 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:12
+    ports:
+      - "5442:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=business
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PORT=5432
+  app:
+    build: .
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+    command: poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 business.wsgi
+    ports:
+      - "8010:8000"
+    links:
+      - postgres:postgres
+volumes:
+  postgres_data:
+    driver: local
