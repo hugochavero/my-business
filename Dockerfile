@@ -2,6 +2,8 @@ FROM python:3.10.1-slim-buster
 RUN apt update && apt install --yes git gcc libcurl4-openssl-dev libssl-dev
 
 ENV PYTHONPATH=business
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 RUN pip3 install poetry
 
@@ -13,4 +15,4 @@ RUN poetry install --no-interaction
 RUN git config --global --add safe.directory /app
 
 COPY . /app
-CMD poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 video_engine.wsgi
+# CMD poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 video_engine.wsgi
