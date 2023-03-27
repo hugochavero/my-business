@@ -1,8 +1,17 @@
 from django.contrib import admin
 
 # Register your models here.
-from core.models import Product, SellOperation, BuyOperation, TransferOperation, ExtractOperation, Stock, SellItem, \
-    BuyItem, Account
+from .models import (
+    Product,
+    SellOperation,
+    BuyOperation,
+    TransferOperation,
+    ExtractOperation,
+    SellItem,
+    BuyItem,
+    Account,
+    SellOperationAccount,
+)
 
 
 class SellItemAdmin(admin.TabularInline):
@@ -10,15 +19,22 @@ class SellItemAdmin(admin.TabularInline):
     readonly_fields = ['cost', 'amount', 'profit']
 
 
+class SellOperationAccount(admin.TabularInline):
+    model = SellOperationAccount
+
+
 class SellOperationAdmin(admin.ModelAdmin):
-    inlines = [SellItemAdmin]
-    readonly_fields = ['amount']
+    inlines = [SellItemAdmin, SellOperationAccount]
+    readonly_fields = ['amount', 'target_accounts', 'source_accounts']
+
+    def save_related(self, request, form, formsets, change):
+        super(SellOperationAdmin, self).save_related(request, form, formsets, change)
+        form.instance.validations_post_save()
+
 
 
 admin.site.register(Product)
-admin.site.register(Stock)
 
-# admin.site.register(SellOperation)
 admin.site.register(SellItem)
 admin.site.register(SellOperation, SellOperationAdmin)
 
