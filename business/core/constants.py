@@ -1,6 +1,6 @@
 class AccountKind:
     CASH = 'Efectivo'
-    BANK = 'Banco'
+    BANK = 'Transferencia'
     CHOICES = (('cash', CASH), ('bank', BANK))
 
 

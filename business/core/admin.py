@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
 from .models import (
     Product,
     SellOperation,
@@ -27,13 +26,18 @@ class SellOperationAdmin(admin.ModelAdmin):
     inlines = [SellItemAdmin, SellOperationAccount]
     readonly_fields = ['amount', 'target_accounts', 'source_accounts']
 
+    class Media:
+        js = (
+            'js/admin.js',
+        )
+
     def save_related(self, request, form, formsets, change):
         super(SellOperationAdmin, self).save_related(request, form, formsets, change)
         form.instance.validations_post_save()
 
 
 
-admin.site.register(Product)
+admin.site.register(Product, Product.get_admin_class())
 
 admin.site.register(SellItem)
 admin.site.register(SellOperation, SellOperationAdmin)

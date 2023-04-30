@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 
+from common.mixins import ModelAdminMixin
 from .validation import ValidationModelMixin
 from ..constants import SellOperationErrors, SellItemErrors, AccountKind
 from .base import TimeStampModel
@@ -19,7 +21,7 @@ __all__ = (
 )
 
 
-class Account(TimeStampModel):
+class Account(TimeStampModel, ModelAdminMixin):
     name = models.CharField(max_length=255)
     kind = models.CharField(choices=AccountKind.CHOICES, default=AccountKind.CASH, max_length=255)
     balance = models.DecimalField(decimal_places=2, max_digits=10)
@@ -37,11 +39,12 @@ class Account(TimeStampModel):
         self.save()
 
 
-class BaseOperation(TimeStampModel):
+class BaseOperation(TimeStampModel, ModelAdminMixin):
     class Meta:
         abstract = True
     target_accounts = models.ManyToManyField(Account, related_name='%(app_label)s_%(class)s_target_account')
     source_accounts = models.ManyToManyField(Account, related_name='%(app_label)s_%(class)s_source_account', null=True)
+    operation_date = models.DateField("Fecha de Operacion", default=timezone.now)
 
 
 class SellOperation(BaseOperation):

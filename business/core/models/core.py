@@ -4,10 +4,11 @@ __all__ = (
     'Product',
 )
 
+from common.mixins import ModelAdminMixin
 from .base import TimeStampModel
 
 
-class BaseItem(TimeStampModel):
+class BaseItem(TimeStampModel, ModelAdminMixin):
     code = models.CharField(unique=True, max_length=255)
     title = models.CharField(max_length=255)
     cost = models.DecimalField(decimal_places=2, max_digits=10)
@@ -16,18 +17,27 @@ class BaseItem(TimeStampModel):
 
     class Meta:
         abstract = True
+        ordering = ('title',)
 
     def __str__(self):
         return self.title
 
     @classmethod
     def get_total_cost(cls, qty, item_id):
-        return qty * cls.objects.filter(id=item_id).values_list('cost', flat=True)[0]
+        return qty * cls.objects.get(id=item_id).cost
 
     @classmethod
     def get_total_price(cls, qty, item_id):
         # TODO: si el producto es una taza, usar hack para retornar precio dinamico
-        return qty * cls.objects.filter(id=item_id).values_list('price', flat=True)[0]
+        obj = cls.objects.get(id=item_id)
+        if obj.code == 'TRC01':
+            if qty < 12:
+                return qty * obj.price
+            elif 12 <= qty < 36:
+                return qty * 560
+            else:
+                return qty * 540
+        return qty * obj.price
 
     def delete(self, **kwargs):
         self.enabled = False
@@ -36,6 +46,7 @@ class BaseItem(TimeStampModel):
 
 class Product(BaseItem):
     stock = models.PositiveIntegerField()
+    external_code = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
         return f'{self.title} x {self.stock}'
