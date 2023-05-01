@@ -36,17 +36,22 @@ class SellOperationAdmin(admin.ModelAdmin):
         form.instance.validations_post_save()
 
 
+class ProductAdmin(admin.ModelAdmin):
+    def get_list_display(self, request):
+        return super().get_list_display(request) + ['stock_in_boxes']
 
-admin.site.register(Product, Product.get_admin_class())
 
+admin.site.register(Product, Product.get_admin_class(ProductAdmin))
+
+# Sell
 admin.site.register(SellItem)
-admin.site.register(SellOperation, SellOperationAdmin)
+admin.site.register(SellOperation, SellOperation.get_admin_class(SellOperationAdmin))
 
-
+# Buy
 admin.site.register(BuyOperation)
 admin.site.register(BuyItem)
 
 admin.site.register(TransferOperation)
 admin.site.register(ExtractOperation)
 
-admin.site.register(Account)
+admin.site.register(Account, Account.get_admin_class())

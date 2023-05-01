@@ -7,6 +7,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
+      - POSTGRES_DB=business
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PORT=5432
@@ -17,8 +18,8 @@ services:
       - .:/app
     environment:
       - DEBUG=True
-      - DJANGO_SETTINGS_MODULE=business.settings.dev
-      - POSTGRESQL_DB_NAME=business_dev
+      - DJANGO_SETTINGS_MODULE=business.settings.prod
+      - POSTGRESQL_DB_NAME=business
     # command: poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 business.wsgi
     command: python business/manage.py runserver 0.0.0.0:8000
     ports:

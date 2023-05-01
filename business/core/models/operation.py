@@ -39,7 +39,7 @@ class Account(TimeStampModel, ModelAdminMixin):
         self.save()
 
 
-class BaseOperation(TimeStampModel, ModelAdminMixin):
+class BaseOperation(TimeStampModel):
     class Meta:
         abstract = True
     target_accounts = models.ManyToManyField(Account, related_name='%(app_label)s_%(class)s_target_account')
@@ -47,7 +47,7 @@ class BaseOperation(TimeStampModel, ModelAdminMixin):
     operation_date = models.DateField("Fecha de Operacion", default=timezone.now)
 
 
-class SellOperation(BaseOperation):
+class SellOperation(BaseOperation, ModelAdminMixin):
 
     def __str__(self):
         return f'{self.id}: Venta por {self.amount}'
@@ -67,6 +67,19 @@ class SellOperation(BaseOperation):
     def validations_post_save(self):
         if self.amount != self.selloperationaccount_set.aggregate(models.Sum('amount'))['amount__sum']:
             raise ValidationError(SellOperationErrors.WRONG_TARGET_ACCOUNTS_AMOUNT)
+
+    @classmethod
+    def get_values_by_date_range(cls, date_from, date_to):
+        """
+            Get sum of cost, profit and amount in the given date range
+        """
+        _query = cls.objects.filter(operation_date__range=(date_from, date_to))
+        return {
+            "date_range": f"From {date_from} to {date_to}",
+            "cost": _query.aggregate(models.Sum('sellitem__cost'))['sellitem__cost__sum'],
+            "profit": _query.aggregate(models.Sum('sellitem__profit'))['sellitem__profit__sum'],
+            "amount": _query.aggregate(models.Sum('sellitem__amount'))['sellitem__amount__sum'],
+        }
 
 
 class SellOperationAccount(models.Model):
@@ -133,7 +146,6 @@ class BuyItem(TimeStampModel):
 
 
 class TransferOperation(BaseOperation):
-    transfer_date = models.DateField()
 
     def save(self, **kwargs):
         # TODO: In this step I have que made the movement of mony from source account to target account

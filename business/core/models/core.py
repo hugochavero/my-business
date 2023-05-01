@@ -14,6 +14,7 @@ class BaseItem(TimeStampModel, ModelAdminMixin):
     cost = models.DecimalField(decimal_places=2, max_digits=10)
     price = models.DecimalField('Precio de venta', decimal_places=2, max_digits=10)
     enabled = models.BooleanField(default=True)
+    last_price_date = models.DateField('Ultima actualizacion precio', null=True)
 
     class Meta:
         abstract = True
@@ -47,9 +48,15 @@ class BaseItem(TimeStampModel, ModelAdminMixin):
 class Product(BaseItem):
     stock = models.PositiveIntegerField()
     external_code = models.CharField(max_length=255, blank=True)
+    box_size = models.PositiveIntegerField('Unidades por Caja', null=True)
 
     def __str__(self):
         return f'{self.title} x {self.stock}'
+
+    @property
+    def stock_in_boxes(self):
+        if self.box_size:
+            return self.stock/self.box_size
 
 
 class Service(BaseItem):
