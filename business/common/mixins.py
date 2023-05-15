@@ -1,5 +1,9 @@
 from typing import List
 from django.contrib.admin import ModelAdmin
+from django.db import models
+
+from common.exceptions import NotAllowedAction
+from common.managers import ReadOnlyObjectManager
 
 
 class ModelAdminMixin:
@@ -20,3 +24,18 @@ class ModelAdminMixin:
             (default_model_admin,),
             dict(list_display=cls.field_names()) or {}
         )
+
+
+class ReadOnlyModel(models.Model):
+    objects = ReadOnlyObjectManager()
+
+    class Meta:
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            return super().save(*args, **kwargs)
+        raise NotAllowedAction
+
+    def delete(self, *args, **kwargs):
+        raise NotAllowedAction

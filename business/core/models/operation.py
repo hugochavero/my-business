@@ -2,9 +2,10 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from common.mixins import ModelAdminMixin
+from common.exceptions import NotAllowedAction
+from common.mixins import ModelAdminMixin, ReadOnlyModel
 from .validation import ValidationModelMixin
-from ..constants import SellOperationErrors, SellItemErrors, AccountKind
+from ..constants import SellOperationErrors, SellItemErrors, AccountKind, TransferOperationErrors
 from .base import TimeStampModel
 from .core import Product
 
@@ -33,13 +34,13 @@ class Account(TimeStampModel, ModelAdminMixin):
         self.balance += amount
         self.save()
 
-    def registar_extract(self, amount):
+    def register_extract(self, amount):
         # TODO: Allow negative balance ??
         self.balance -= amount
         self.save()
 
 
-class BaseOperation(TimeStampModel):
+class BaseOperation(TimeStampModel, ModelAdminMixin):
     class Meta:
         abstract = True
     target_accounts = models.ManyToManyField(Account, related_name='%(app_label)s_%(class)s_target_account')
@@ -47,7 +48,7 @@ class BaseOperation(TimeStampModel):
     operation_date = models.DateField("Fecha de Operacion", default=timezone.now)
 
 
-class SellOperation(BaseOperation, ModelAdminMixin):
+class SellOperation(BaseOperation):
 
     def __str__(self):
         return f'{self.id}: Venta por {self.amount}'
@@ -87,20 +88,21 @@ class SellOperationAccount(models.Model):
     operation = models.ForeignKey(SellOperation, on_delete=models.CASCADE)
     amount = models.DecimalField(decimal_places=2, max_digits=10)
 
-    def actions_post_save(self):
+    def actions_pre_save(self):
         # Update balance in target accounts
-        self.account.register_income(self.amount)
-        self.operation.target_accounts.add(self.account)
+        if self.id is None:
+            self.account.register_income(self.amount)
+            self.operation.target_accounts.add(self.account)
 
-    def validations_post_save(self):
+    def validations_pre_save(self):
         # TODO: This validation es needed ?
         if not self.operation.target_accounts.exists():
             raise ValidationError(SellOperationErrors.MISSING_TARGET_ACCOUNT)
 
     def save(self, **kwargs):
+        self.validations_pre_save()
+        self.actions_pre_save()
         super(SellOperationAccount, self).save(**kwargs)
-        self.actions_post_save()
-        self.validations_post_save()
 
 
 class SellItem(TimeStampModel, ValidationModelMixin):
@@ -145,11 +147,8 @@ class BuyItem(TimeStampModel):
         # TODO: aqui debo crear el producto si no existe o actualizar el stock si existe
 
 
-class TransferOperation(BaseOperation):
-
-    def save(self, **kwargs):
-        # TODO: In this step I have que made the movement of mony from source account to target account
-        return super().save(**kwargs)
+class TransferOperation(BaseOperation, ReadOnlyModel):
+    amount = models.DecimalField(decimal_places=2, max_digits=10)
 
 
 class ExtractOperation(BaseOperation):

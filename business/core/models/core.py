@@ -35,9 +35,9 @@ class BaseItem(TimeStampModel, ModelAdminMixin):
             if qty < 12:
                 return qty * obj.price
             elif 12 <= qty < 36:
-                return qty * 560
+                return qty * 650
             else:
-                return qty * 540
+                return qty * 625
         return qty * obj.price
 
     def delete(self, **kwargs):
@@ -56,7 +56,7 @@ class Product(BaseItem):
     @property
     def stock_in_boxes(self):
         if self.box_size:
-            return self.stock/self.box_size
+            return int(self.stock/self.box_size)
 
 
 class Service(BaseItem):

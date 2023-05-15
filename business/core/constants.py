@@ -11,3 +11,7 @@ class SellOperationErrors:
 
 class SellItemErrors:
     INSUFFICIENT_STOCK = 'Product {} con stock insuficiente. Requerido: {}, Existente: {}'
+
+
+class TransferOperationErrors:
+    INSUFFICIENT_FOUNDS = 'Fondos insuficientes en cuenta de origen'
