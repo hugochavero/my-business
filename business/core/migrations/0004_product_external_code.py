@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0003_alter_buyoperation_source_accounts_and_more'),
+        ("core", "0003_alter_buyoperation_source_accounts_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='external_code',
-            field=models.CharField(default='', max_length=255),
+            model_name="product",
+            name="external_code",
+            field=models.CharField(default="", max_length=255),
             preserve_default=False,
         ),
     ]

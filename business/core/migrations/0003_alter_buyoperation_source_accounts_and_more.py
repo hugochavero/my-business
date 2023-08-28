@@ -4,30 +4,45 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0002_selloperationaccount_product_stock_delete_stock'),
+        ("core", "0002_selloperationaccount_product_stock_delete_stock"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buyoperation',
-            name='source_accounts',
-            field=models.ManyToManyField(null=True, related_name='%(app_label)s_%(class)s_source_account', to='core.account'),
+            model_name="buyoperation",
+            name="source_accounts",
+            field=models.ManyToManyField(
+                null=True,
+                related_name="%(app_label)s_%(class)s_source_account",
+                to="core.account",
+            ),
         ),
         migrations.AlterField(
-            model_name='extractoperation',
-            name='source_accounts',
-            field=models.ManyToManyField(null=True, related_name='%(app_label)s_%(class)s_source_account', to='core.account'),
+            model_name="extractoperation",
+            name="source_accounts",
+            field=models.ManyToManyField(
+                null=True,
+                related_name="%(app_label)s_%(class)s_source_account",
+                to="core.account",
+            ),
         ),
         migrations.AlterField(
-            model_name='selloperation',
-            name='source_accounts',
-            field=models.ManyToManyField(null=True, related_name='%(app_label)s_%(class)s_source_account', to='core.account'),
+            model_name="selloperation",
+            name="source_accounts",
+            field=models.ManyToManyField(
+                null=True,
+                related_name="%(app_label)s_%(class)s_source_account",
+                to="core.account",
+            ),
         ),
         migrations.AlterField(
-            model_name='transferoperation',
-            name='source_accounts',
-            field=models.ManyToManyField(null=True, related_name='%(app_label)s_%(class)s_source_account', to='core.account'),
+            model_name="transferoperation",
+            name="source_accounts",
+            field=models.ManyToManyField(
+                null=True,
+                related_name="%(app_label)s_%(class)s_source_account",
+                to="core.account",
+            ),
         ),
     ]

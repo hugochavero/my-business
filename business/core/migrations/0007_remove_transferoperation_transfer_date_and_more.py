@@ -4,24 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0006_product_box_size_alter_account_kind'),
+        ("core", "0006_product_box_size_alter_account_kind"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='transferoperation',
-            name='transfer_date',
+            model_name="transferoperation",
+            name="transfer_date",
         ),
         migrations.AddField(
-            model_name='product',
-            name='last_price_date',
-            field=models.DateField(null=True, verbose_name='Ultima actualizacion precio'),
+            model_name="product",
+            name="last_price_date",
+            field=models.DateField(
+                null=True, verbose_name="Ultima actualizacion precio"
+            ),
         ),
         migrations.AddField(
-            model_name='service',
-            name='last_price_date',
-            field=models.DateField(null=True, verbose_name='Ultima actualizacion precio'),
+            model_name="service",
+            name="last_price_date",
+            field=models.DateField(
+                null=True, verbose_name="Ultima actualizacion precio"
+            ),
         ),
     ]

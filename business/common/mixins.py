@@ -22,7 +22,7 @@ class ModelAdminMixin:
         return type(
             f"{cls.__class__.__name__}Admin",
             (default_model_admin,),
-            dict(list_display=cls.field_names()) or {}
+            dict(list_display=cls.field_names()) or {},
         )
 
 

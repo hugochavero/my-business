@@ -4,20 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0005_alter_product_options_alter_service_options_and_more'),
+        ("core", "0005_alter_product_options_alter_service_options_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='box_size',
-            field=models.PositiveIntegerField(null=True, verbose_name='Unidades por Caja'),
+            model_name="product",
+            name="box_size",
+            field=models.PositiveIntegerField(
+                null=True, verbose_name="Unidades por Caja"
+            ),
         ),
         migrations.AlterField(
-            model_name='account',
-            name='kind',
-            field=models.CharField(choices=[('cash', 'Efectivo'), ('bank', 'Transferencia')], default='Efectivo', max_length=255),
+            model_name="account",
+            name="kind",
+            field=models.CharField(
+                choices=[("cash", "Efectivo"), ("bank", "Transferencia")],
+                default="Efectivo",
+                max_length=255,
+            ),
         ),
     ]

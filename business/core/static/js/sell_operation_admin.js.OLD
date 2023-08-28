@@ -1,0 +1,97 @@
+document.addEventListener("DOMContentLoaded", function(event) {
+    let $ = django.jQuery
+    let amounts_list = []
+
+    $(document).ready(function(){
+        // Set saved operation date
+        let saved_operation_date = window.localStorage.getItem("operation_date")
+        $("#id_operation_date").val(saved_operation_date);
+
+        function getIdFromString(string) {
+            return parseInt(string.match(/\d+/)[0])
+        }
+
+        function increaseTotalAmount(elementId, amount){
+            let amount_field = $('#id_amount');
+            let aux = 0;
+            amounts_list[elementId] = amount
+
+            for (let currentAmountKey in amounts_list) {
+                aux += amounts_list[currentAmountKey];
+            }
+            amount_field.val(aux);
+            amount_field.attr('readonly', true);
+        }
+
+        function decreaseTotalAmount(){
+            let amount_field = $($(".readonly")[0]);
+            let current_amount = parseFloat(amount_field.html());
+            if (isNaN(current_amount)) {
+                current_amount = 0;
+            }
+            amount_field.html(current_amount - amount);
+        }
+
+        function updateValues(elementId, productId) {
+            let qty = parseFloat($('#sellitem_set-' + elementId).find('.field-qty').children().val())
+            if (!isNaN(elementId) & !isNaN(productId) & !isNaN(qty)) {
+                $.ajax('/core/product/' + productId + '/values-by-qty/?qty=' + qty).done(function (response) {
+                    // Set cost value
+                    // $('#sellitem_set-' + elementId).find('.field-cost').children().html(response.cost);
+                    $('#id_sellitem_set-' + elementId + '-cost').val(response.cost);
+                    $('#id_sellitem_set-' + elementId + '-cost').attr('readonly', true);
+
+
+                    // Set amount value
+                    //$('#sellitem_set-' + elementId).find('.field-amount').children().html(response.amount);
+                    $('#id_sellitem_set-' + elementId + '-amount').val(response.amount);
+                    $('#id_sellitem_set-' + elementId + '-amount').attr('readonly', true);
+
+
+                    // Set profit value
+                    //$('#sellitem_set-' + elementId).find('.field-profit').children().html(response.profit);
+                    $('#id_sellitem_set-' + elementId + '-profit').val(response.profit);
+                    $('#id_sellitem_set-' + elementId + '-profit').attr('readonly', true);
+
+
+                    // increate Total Amount
+                    increaseTotalAmount(elementId, response.amount);
+                })
+            }
+
+        }
+
+        // Bind functions
+        $('.field-qty input').on('keyup change',function (event) {
+            let elementId = getIdFromString(this.id);
+            // Get Id of selected product
+            let productId = parseInt($('#id_sellitem_set-' + elementId + '-product').val())
+            updateValues(elementId, productId);
+        })
+        $('.field-product select').change(function () {
+            let elementId = getIdFromString(this.id);
+            // Get Id of selected product
+            let productId = parseInt($('#id_sellitem_set-' + elementId + '-product').val())
+            updateValues(elementId, productId);
+        })
+        $('.field-account select').change(function () {
+            let elementId = getIdFromString(this.id);
+        })
+
+        $('.dynamic-sellitem_set .delete a').on('click', function(target){
+            console.dir(target)
+            let elementId = getIdFromString(this.id);
+        })
+
+        $('.dynamic-sellitem_set .delete a').click(function(){
+            // let elementId = getIdFromString(this.id);
+            // let deleted_amount = parseInt($('#id_sellitem_set-' + elementId + '-amount').val())
+            //decreaseTotalAmount(deleted_amount);
+        })
+
+        // Save operation date in storage
+        $('input[type="submit"]').click(function(){
+            window.localStorage.setItem("operation_date", $("#id_operation_date").val())
+        })
+    });
+});

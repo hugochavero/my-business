@@ -5,43 +5,50 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0004_product_external_code'),
+        ("core", "0004_product_external_code"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='product',
-            options={'ordering': ('title',)},
+            name="product",
+            options={"ordering": ("title",)},
         ),
         migrations.AlterModelOptions(
-            name='service',
-            options={'ordering': ('title',)},
+            name="service",
+            options={"ordering": ("title",)},
         ),
         migrations.AddField(
-            model_name='buyoperation',
-            name='operation_date',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Fecha de Operacion'),
+            model_name="buyoperation",
+            name="operation_date",
+            field=models.DateField(
+                default=django.utils.timezone.now, verbose_name="Fecha de Operacion"
+            ),
         ),
         migrations.AddField(
-            model_name='extractoperation',
-            name='operation_date',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Fecha de Operacion'),
+            model_name="extractoperation",
+            name="operation_date",
+            field=models.DateField(
+                default=django.utils.timezone.now, verbose_name="Fecha de Operacion"
+            ),
         ),
         migrations.AddField(
-            model_name='selloperation',
-            name='operation_date',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Fecha de Operacion'),
+            model_name="selloperation",
+            name="operation_date",
+            field=models.DateField(
+                default=django.utils.timezone.now, verbose_name="Fecha de Operacion"
+            ),
         ),
         migrations.AddField(
-            model_name='transferoperation',
-            name='operation_date',
-            field=models.DateField(default=django.utils.timezone.now, verbose_name='Fecha de Operacion'),
+            model_name="transferoperation",
+            name="operation_date",
+            field=models.DateField(
+                default=django.utils.timezone.now, verbose_name="Fecha de Operacion"
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='external_code',
+            model_name="product",
+            name="external_code",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]
