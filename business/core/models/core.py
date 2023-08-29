@@ -33,9 +33,9 @@ class BaseItem(TimeStampModel, ModelAdminMixin):
             if qty < 12:
                 return qty * obj.price
             elif 12 <= qty < 36:
-                return qty * 700
+                return qty * 790
             else:
-                return qty * 675
+                return qty * 760
         return qty * obj.price
 
     def delete(self, **kwargs):
