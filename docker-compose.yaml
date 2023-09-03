@@ -12,15 +12,14 @@ services:
       - POSTGRES_PORT=5432
   app:
     build: .
-    working_dir: /app
+    working_dir: /app/business
     volumes:
       - .:/app
     environment:
       - DEBUG=True
       - DJANGO_SETTINGS_MODULE=business.settings.dev
       - POSTGRESQL_DB_NAME=business_dev
-    # command: poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 business.wsgi
-    command: python business/manage.py runserver 0.0.0.0:8000
+    command: poetry run gunicorn --workers=2 --bind 0.0.0.0:8000 business.wsgi:application
     ports:
       - "8010:8000"
     links:
